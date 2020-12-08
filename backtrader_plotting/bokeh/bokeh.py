@@ -40,7 +40,15 @@ from backtrader_plotting.html import metadata
 _logger = logging.getLogger(__name__)
 
 
-if 'ipykernel' in sys.modules:
+# hack to integrate backtrader_plotting to Streamlit
+if st._is_running_with_streamlit:
+    def show(fig):
+        st.bokeh_chart(fig)
+    def display(html):
+        pass
+    def HTML(html):
+        pass
+elif 'ipykernel' in sys.modules:
     from IPython.core.display import display, HTML
     from bokeh.io import output_notebook, show
     output_notebook()
