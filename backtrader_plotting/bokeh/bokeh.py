@@ -43,7 +43,10 @@ _logger = logging.getLogger(__name__)
 # hack to integrate backtrader_plotting to Streamlit
 if st._is_running_with_streamlit:
     def show(fig):
-        st.bokeh_chart(fig)
+        # fig.width = 900
+        # fig.height = 600
+        # fig.sizing_mode = 'fixed'
+        st.bokeh_chart(fig, use_container_width=True)
     def display(html):
         pass
     def HTML(html):
@@ -383,7 +386,14 @@ class Bokeh(metaclass=bt.MetaParams):
 
             Bokeh._sort_plotobjects(objects)
 
-            g = gridplot([[x.figure] for x in objects],
+            figs = [[x.figure] for x in objects]
+            for f in figs:
+                f[0].width = self.p.scheme.plot_width
+                f[0].height = self.p.scheme.plot_height
+                f[0].sizing_mode = self.p.scheme.plot_sizing_mode
+            
+            # g = gridplot([[x.figure] for x in objects],
+            g = gridplot(figs,
                          toolbar_options={'logo': None},
                          toolbar_location=self.p.scheme.toolbar_location,
                          sizing_mode=self.p.scheme.plot_sizing_mode,
